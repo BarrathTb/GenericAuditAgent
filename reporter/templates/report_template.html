@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        color: #2c3e50;
+      }
+      h1 {
+        text-align: center;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3498db;
+      }
+      .section {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .subsection {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: #3498db;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      .chart {
+        margin: 20px 0;
+        text-align: center;
+      }
+      .chart img {
+        max-width: 100%;
+        height: auto;
+      }
+      .recommendations {
+        margin-top: 20px;
+      }
+      .recommendation-category {
+        margin-bottom: 15px;
+      }
+      .recommendation-item {
+        padding: 10px;
+        margin-bottom: 5px;
+        background-color: #e8f4fc;
+        border-left: 4px solid #3498db;
+        border-radius: 3px;
+      }
+      .metadata {
+        font-size: 0.9em;
+        color: #777;
+        margin-bottom: 20px;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{{ title }}</h1>
+
+    <div class="metadata">
+      <p>Generated: {{ generated_date }}</p>
+      <p>Analysis Date: {{ analysis_results.metadata.analysis_timestamp }}</p>
+      <p>Products Analyzed: {{ analysis_results.metadata.product_count }}</p>
+      <p>Articles Analyzed: {{ analysis_results.metadata.article_count }}</p>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="section">
+      <h2>Executive Summary</h2>
+
+      {% if analysis_results.summary and
+      analysis_results.summary.price_statistics %}
+      <div class="subsection">
+        <h3>Price Statistics</h3>
+        <table>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Minimum Price</td>
+            <td>${{ analysis_results.summary.price_statistics.min_price }}</td>
+          </tr>
+          <tr>
+            <td>Maximum Price</td>
+            <td>${{ analysis_results.summary.price_statistics.max_price }}</td>
+          </tr>
+          <tr>
+            <td>Average Price</td>
+            <td>
+              ${{ analysis_results.summary.price_statistics.avg_price|round(2)
+              }}
+            </td>
+          </tr>
+          <tr>
+            <td>Median Price</td>
+            <td>
+              ${{ analysis_results.summary.price_statistics.median_price }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% endif %} {% if charts and charts.price_distribution %}
+      <div class="chart">
+        <h3>Price Distribution</h3>
+        <img
+          src="data:image/png;base64,{{ charts.price_distribution }}"
+          alt="Price Distribution Chart"
+        />
+      </div>
+      {% endif %} {% if analysis_results.seo_analysis %}
+      <div class="subsection">
+        <h3>SEO Analysis</h3>
+        <p>
+          Overall SEO Score: {{ analysis_results.seo_analysis.seo_score|round(1)
+          }}/100 ({{ analysis_results.seo_analysis.seo_quality }})
+        </p>
+
+        {% if charts and charts.seo_metrics %}
+        <div class="chart">
+          <img
+            src="data:image/png;base64,{{ charts.seo_metrics }}"
+            alt="SEO Metrics Chart"
+          />
+        </div>
+        {% endif %}
+      </div>
+      {% endif %} {% if analysis_results.content_quality_analysis %}
+      <div class="subsection">
+        <h3>Content Quality</h3>
+        {% if analysis_results.content_quality_analysis.description_analysis %}
+        <p>
+          Average Description Length: {{
+          analysis_results.content_quality_analysis.description_analysis.avg_length|round(0)
+          }} words ({{
+          analysis_results.content_quality_analysis.description_analysis.length_interpretation
+          }})
+        </p>
+        <p>
+          Average Readability Score: {{
+          analysis_results.content_quality_analysis.description_analysis.avg_readability|round(1)
+          }} ({{
+          analysis_results.content_quality_analysis.description_analysis.readability_interpretation
+          }})
+        </p>
+        {% endif %} {% if charts and charts.readability_distribution %}
+        <div class="chart">
+          <h4>Content Readability Distribution</h4>
+          <img
+            src="data:image/png;base64,{{ charts.readability_distribution }}"
+            alt="Readability Distribution Chart"
+          />
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Analyses -->
+    <div class="section">
+      <h2>Product Analyses</h2>
+
+      {% for product in analysis_results.product_analyses[:10] %}
+      <div class="subsection">
+        <h3>{{ product.product_name }}</h3>
+        <p>
+          <strong>URL:</strong>
+          <a href="{{ product.url }}" target="_blank">{{ product.url }}</a>
+        </p>
+        <p><strong>ID/SKU:</strong> {{ product.product_id }}</p>
+
+        {% if product.description_analysis %}
+        <div class="subsection">
+          <h4>Description Analysis</h4>
+          <p>
+            <strong>Word Count:</strong> {{
+            product.description_analysis.word_count }}
+          </p>
+          <p>
+            <strong>Readability:</strong> {{
+            product.description_analysis.readability.flesch_reading_ease|round(1)
+            }} ({{ product.description_analysis.readability.interpretation }})
+          </p>
+          <p>
+            <strong>Sentiment:</strong> {{
+            product.description_analysis.sentiment.interpretation }}
+          </p>
+
+          {% if product.description_analysis.key_phrases %}
+          <p>
+            <strong>Key Phrases:</strong> {{
+            product.description_analysis.key_phrases|join(', ') }}
+          </p>
+          {% endif %}
+        </div>
+        {% endif %} {% if product.price_analysis %}
+        <div class="subsection">
+          <h4>Price Information</h4>
+          <p><strong>Price:</strong> {{ product.price_analysis.price_text }}</p>
+          <p>
+            <strong>Currency:</strong> {{ product.price_analysis.currency }}
+          </p>
+        </div>
+        {% endif %} {% if product.template_analysis %}
+        <div class="subsection">
+          <h4>Template Analysis</h4>
+          <p>
+            <strong>Completeness:</strong> {{
+            product.template_analysis.completeness_score|round(1) }}% ({{
+            product.template_analysis.quality }})
+          </p>
+
+          {% if product.template_analysis.missing_elements %}
+          <p>
+            <strong>Missing Elements:</strong> {{
+            product.template_analysis.missing_elements|join(', ') }}
+          </p>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Recommendations -->
+    <div class="section">
+      <h2>Recommendations</h2>
+
+      {% for category, items in recommendations.items() %}
+      <div class="recommendation-category">
+        <h3>{{ category }} Recommendations</h3>
+
+        {% for item in items %}
+        <div class="recommendation-item">{{ item }}</div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Generic AI Audit Agent</p>
+      <p>Generated on {{ generated_date }}</p>
+    </footer>
+  </body>
+</html>

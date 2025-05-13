@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generic AI Audit Agent</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-robot"></i> Generic AI Audit Agent</h1>
+        <p>
+          Analyze any website for product information, content quality, and SEO
+          metrics
+        </p>
+      </header>
+
+      <main>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="configuration">
+            Configuration
+          </button>
+          <button class="tab-btn" data-tab="status">Status</button>
+          <button class="tab-btn" data-tab="reports">Reports</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- Configuration Tab -->
+          <div class="tab-pane active" id="configuration">
+            <div class="config-section">
+              <h2>Basic Configuration</h2>
+              <div class="form-group">
+                <label for="start-url">Starting URL:</label>
+                <input
+                  type="url"
+                  id="start-url"
+                  placeholder="https://example.com"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="allowed-domain">Allowed Domain:</label>
+                <input
+                  type="text"
+                  id="allowed-domain"
+                  placeholder="example.com"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="config-section">
+              <h2>Product Identification</h2>
+              <div class="form-group">
+                <label for="product-url-patterns"
+                  >Product URL Patterns (one per line):</label
+                >
+                <textarea
+                  id="product-url-patterns"
+                  placeholder="/product/&#10;/item/&#10;[pP]roduct[-_]?[dD]etail"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label for="product-page-selectors"
+                  >Product Page Selectors (one per line):</label
+                >
+                <textarea
+                  id="product-page-selectors"
+                  placeholder="div.product&#10;div.product-detail&#10;#product"
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <h2>Data Extraction</h2>
+              <p class="help-text">
+                Select which product data fields you want to extract:
+              </p>
+              <div class="checkbox-group data-fields">
+                <label>
+                  <input type="checkbox" id="extract-name" checked /> Product
+                  Name
+                </label>
+                <label>
+                  <input type="checkbox" id="extract-price" checked /> Product
+                  Price
+                </label>
+                <label>
+                  <input type="checkbox" id="extract-description" checked />
+                  Product Description
+                </label>
+                <label>
+                  <input type="checkbox" id="extract-sku" checked /> Product SKU
+                </label>
+                <label>
+                  <input type="checkbox" id="extract-images" checked /> Product
+                  Images
+                </label>
+                <label>
+                  <input type="checkbox" id="extract-specs" /> Product
+                  Specifications
+                </label>
+              </div>
+              <div class="advanced-options">
+                <button id="toggle-advanced" class="btn btn-secondary">
+                  <i class="fas fa-cog"></i> Advanced Options
+                </button>
+                <div id="advanced-selectors" class="hidden">
+                  <div class="form-group">
+                    <label for="product-name-selectors"
+                      >Product Name Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-name-selectors"
+                      placeholder="h1.product-title::text&#10;h1[itemprop='name']::text&#10;h1::text"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="product-price-selectors"
+                      >Product Price Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-price-selectors"
+                      placeholder=".price::text&#10;[itemprop='price']::text&#10;.product-price::text"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="product-description-selectors"
+                      >Product Description Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-description-selectors"
+                      placeholder=".product-description::text&#10;[itemprop='description']::text&#10;.description::text"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="product-sku-selectors"
+                      >Product SKU Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-sku-selectors"
+                      placeholder="[itemprop='sku']::text&#10;.product-sku::text&#10;.sku::text"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="product-image-selectors"
+                      >Product Image Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-image-selectors"
+                      placeholder=".product-image::attr(src)&#10;[itemprop='image']::attr(src)&#10;.product img::attr(src)"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="product-specs-selectors"
+                      >Product Specifications Selectors (one per line):</label
+                    >
+                    <textarea
+                      id="product-specs-selectors"
+                      placeholder=".product-specs&#10;.specifications&#10;table.specs"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <h2>Custom Fields</h2>
+              <p class="help-text">
+                Add any additional fields you want to extract:
+              </p>
+              <div id="custom-fields-container">
+                <!-- Custom fields will be added here -->
+              </div>
+              <button id="add-custom-field" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Add Custom Field
+              </button>
+            </div>
+
+            <div class="config-section">
+              <h2>Crawl Settings</h2>
+              <div class="form-group">
+                <label for="crawl-limit">Crawl Limit (0-1000 pages):</label>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="crawl-limit"
+                    min="0"
+                    max="1000"
+                    value="100"
+                    class="slider"
+                  />
+                  <span id="crawl-limit-value">100</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="no-limit" /> No limit (crawl all
+                  pages)
+                </label>
+              </div>
+            </div>
+
+            <div class="config-section">
+              <h2>Report Configuration</h2>
+              <div class="form-group">
+                <label>Report Formats:</label>
+                <div class="checkbox-group">
+                  <label>
+                    <input type="checkbox" id="report-text" checked /> Text
+                  </label>
+                  <label>
+                    <input type="checkbox" id="report-html" checked /> HTML
+                  </label>
+                  <label>
+                    <input type="checkbox" id="report-csv" checked /> CSV
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button id="start-audit" class="btn btn-primary">
+                <i class="fas fa-play"></i> Start Audit
+              </button>
+            </div>
+          </div>
+
+          <!-- Status Tab -->
+          <div class="tab-pane" id="status">
+            <div class="status-section">
+              <h2>Audit Status</h2>
+              <div class="status-info">
+                <div class="status-item">
+                  <span class="status-label">Status:</span>
+                  <span id="status-value" class="status-value"
+                    >Not running</span
+                  >
+                </div>
+                <div class="status-item">
+                  <span class="status-label">Current Step:</span>
+                  <span id="step-value" class="status-value">-</span>
+                </div>
+                <div class="status-item">
+                  <span class="status-label">Progress:</span>
+                  <div class="progress-bar-container">
+                    <div
+                      id="progress-bar"
+                      class="progress-bar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <span id="progress-value">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="log-section">
+              <div class="log-header">
+                <h2>Audit Log</h2>
+                <div class="log-actions">
+                  <button id="stop-audit" class="btn btn-danger">
+                    <i class="fas fa-stop"></i> Stop Audit
+                  </button>
+                  <button id="clear-log" class="btn btn-secondary">
+                    <i class="fas fa-trash"></i> Clear Log
+                  </button>
+                </div>
+              </div>
+              <div id="log-container" class="log-container">
+                <!-- Log messages will be displayed here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports Tab -->
+          <div class="tab-pane" id="reports">
+            <div class="reports-section">
+              <h2>Available Reports</h2>
+              <div class="report-types">
+                <div class="report-type">
+                  <h3>Text Reports</h3>
+                  <ul id="text-reports" class="report-list">
+                    <!-- Text reports will be listed here -->
+                  </ul>
+                </div>
+                <div class="report-type">
+                  <h3>HTML Reports</h3>
+                  <ul id="html-reports" class="report-list">
+                    <!-- HTML reports will be listed here -->
+                  </ul>
+                </div>
+                <div class="report-type">
+                  <h3>CSV Reports</h3>
+                  <ul id="csv-reports" class="report-list">
+                    <!-- CSV reports will be listed here -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <p>&copy; 2025 Generic AI Audit Agent</p>
+      </footer>
+    </div>
+
+    <!-- Custom Field Template (hidden) -->
+    <template id="custom-field-template">
+      <div class="custom-field">
+        <div class="form-group">
+          <label for="custom-field-name-{id}">Field Name:</label>
+          <input
+            type="text"
+            id="custom-field-name-{id}"
+            class="custom-field-name"
+            placeholder="availability"
+          />
+        </div>
+        <div class="form-group advanced-selector hidden">
+          <label for="custom-field-selector-{id}"
+            >CSS Selector (optional):</label
+          >
+          <input
+            type="text"
+            id="custom-field-selector-{id}"
+            class="custom-field-selector"
+            placeholder=".stock::text"
+          />
+        </div>
+        <button class="btn btn-danger remove-custom-field">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </template>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

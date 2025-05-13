@@ -1,0 +1,77 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Data files
+data/raw/*
+data/processed/*
+data/analyzed/*
+data/reports/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/analyzed/.gitkeep
+!data/reports/.gitkeep
+!data/README.md
+
+# Scrapy specific
+.scrapy/
+httpcache/
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS specific
+.DS_Store
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Matplotlib
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
